@@ -396,5 +396,5 @@ def run():
 if __name__ == '__main__':
     run()
 
- Viterbi1 Accuracy = 75.5%
- Viterbi2 Accuracy = 82.4%
+ #Viterbi1 Accuracy = 75.5%
+ #Viterbi2 Accuracy = 82.4%
