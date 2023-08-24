@@ -1,4 +1,3 @@
-# In[1]:
 #import training data set and twitter tags
 import pandas as pd
 df = pd.read_csv("twitter_train.txt", sep="\t+", engine="python", header=None)
@@ -6,8 +5,6 @@ df.columns = ["token","tag"]
 tt = pd.read_csv("twitter_tags.txt", sep="\t", header=None)
 tt.columns = ["tags"]
 
-
-# In[35]:
 #for each tag, count number of times each token appear
 output_count_dict = {}
 
@@ -20,8 +17,6 @@ for tag in tt["tags"]:
             token_dict[token] = 1
     output_count_dict[tag] = token_dict #store this tag into the output dictionary and move on to next tag (if any)
 
-
-# In[36]:
 #convert count to probability of each token appearing given tag
 num_words = df['token'].nunique() #number of unique tokens in training data
 δ = 1 # possible values: 0.01, 0.1, 1, 10
@@ -34,15 +29,11 @@ for tag in output_count_dict.keys(): #iterate through all tags
         token_dict[token] = (output_count_dict[tag][token] + δ)/count_yj #convert count to probability
     output_prob_dict[tag] = token_dict #store the probability distributions into the output dictionary
 
-
-# In[32]:
 #write to txt file
 import json
 with open('naive_output_probs.txt', 'w') as convert_file:
      convert_file.write(json.dumps(output_prob_dict))
 
-
-# In[33]:
 #model design
 def naive_predict(in_output_probs_filename, in_test_filename, out_prediction_filename):
     import pandas as pd
@@ -151,7 +142,3 @@ if __name__ == '__main__':
 # For δ = 1, Naive prediction accuracy = 908/1378 = 0.6589259796806967
 # 
 # For δ = 1, Naive prediction2 accuracy = 909/1378 = 0.6596516690856313
-
-
-
-
