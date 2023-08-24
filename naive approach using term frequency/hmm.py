@@ -96,7 +96,7 @@ def evaluate(in_prediction_filename, in_answer_filename):
     return correct, len(predicted_tags), correct/len(predicted_tags)
 
 def run():
-    ddir = '' #your working dir
+    ddir = '.' #your working dir
 
     in_train_filename = f'{ddir}/twitter_train.txt'
 
