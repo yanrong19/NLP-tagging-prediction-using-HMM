@@ -1,6 +1,3 @@
-# In[1]:
-
-
 import pandas as pd
 import numpy as np
 df = pd.read_csv("twitter_train.txt", sep="\t+", engine="python", header=None)
@@ -10,11 +7,7 @@ df2.columns = ["token","tag"]
 tt = pd.read_csv("twitter_tags.txt", sep="\t", header=None)
 tt.columns = ["tag"]
 
-
-# In[2]:
-
-
-#Q4a)
+#Tag Transition Count and Probability
 transition_count_dict = {}
 
 for i in range(len(df["tag"])-1):
@@ -29,11 +22,6 @@ for i in range(len(df["tag"])-1):
         transition_count_dict[tag1] = {}
         transition_count_dict[tag1][tag2] = 1 #tag1 -> tag2 not present in dictionary
 
-
-# In[3]:
-
-
-#Q4a)
 #convert count to probability of each transition from tag1 to tag2
 transition_prob_dict = {}
 δ = 0.01
@@ -47,11 +35,6 @@ for tag1, tag2s in transition_count_dict.items():
     transition_prob["unknown"] = δ/total_count  #store probability of unseen transition of tags
     transition_prob_dict[tag1] = transition_prob
 
-
-# In[4]:
-
-
-#Q4a)
 import json
 with open('trans_probs.txt', 'w') as convert_file:
      convert_file.write(json.dumps(transition_prob_dict))
@@ -59,11 +42,7 @@ with open('trans_probs.txt', 'w') as convert_file:
 with open('trans_probs2.txt', 'w') as convert_file:
      convert_file.write(json.dumps(transition_prob_dict))
 
-
-# In[5]:
-
-
-#Q4a)
+#Token Emission Count and Probability
 output_count_dict = {}
 
 for tag in tt["tag"]:
@@ -75,11 +54,6 @@ for tag in tt["tag"]:
             token_dict[token] = 1
     output_count_dict[tag] = token_dict #store this tag into the output dictionary and move on to next tag (if any)
 
-
-# In[6]:
-
-
-#Q4a)
 #convert count to probability of each token appearing given tag
 output_prob_dict = {}
 δ = 0.01 # possible values: 0.01, 0.1, 1, 10
@@ -96,11 +70,6 @@ for tag in output_count_dict.keys(): #iterate through all tags
     token_dict["unknown"] = δ/count_yj #store probability of unseen emission of tokens (including both seen and unseen tokens in training data)
     output_prob_dict[tag] = token_dict #store the probability distributions into the output dictionary
 
-
-# In[7]:
-
-
-#Q4a)
 import json
 with open('output_probs.txt', 'w') as convert_file:
      convert_file.write(json.dumps(output_prob_dict))
@@ -109,7 +78,7 @@ with open('output_probs2.txt', 'w') as convert_file:
      convert_file.write(json.dumps(output_prob_dict))
 
 
-# 5a) To improve the POS tagger, 2 methods were implemented to better handle unseen words
+# To improve the POS tagger, 2 methods were implemented to better handle unseen words
 # 
 # Firstly, we implemented rule-based tagging by identifying tokens that have specific patterns. 
 # This can allow us to better map unseen tokens based on their patterns and their corresponding association with a certain tag. 
@@ -138,9 +107,6 @@ with open('output_probs2.txt', 'w') as convert_file:
 # Additionally, we can assign weights to tags based on their degree of "openness". 
 # For example, some tags such as "P" (prepositions) have certain fixed words and hence are quite closed. Tags such as "E" (Expressions) do not have fixed words and are highly variable, hence are quite open. 
 # Given an unseen token, they likely belong to a tag which is more open, and thus we can assign higher probabilities to these tags.
-
-# In[8]:
-
 
 def word_patterns(tag, token): #rule-based tagging to improve tagging of unseen tokens in test data
     if (token[:5] == "@USER") & (tag == "@"):
@@ -172,11 +138,6 @@ def word_patterns(tag, token): #rule-based tagging to improve tagging of unseen 
     else:
         return 0.0001 #still unknown tokens, assign arbitrarily low probability
 
-
-# In[9]:
-
-
-#Q4b)
 def viterbi_predict(in_tags_filename, in_trans_probs_filename, in_output_probs_filename, in_test_filename,
                     out_predictions_filename):
     import numpy as np
@@ -260,7 +221,6 @@ def viterbi_predict(in_tags_filename, in_trans_probs_filename, in_output_probs_f
     pred_df = pd.DataFrame(pred)
     pred_df.to_csv(out_predictions_filename, sep='\t', index=False, header=None)
 
-#Q5b)
 def viterbi_predict2(in_tags_filename, in_trans_probs_filename, in_output_probs_filename, in_test_filename,
                      out_predictions_filename):
     import numpy as np
@@ -408,34 +368,10 @@ def evaluate(in_prediction_filename, in_answer_filename):
         if pred == truth: correct += 1
     return correct, len(predicted_tags), correct/len(predicted_tags)
 
-
-
 def run():
-    '''
-    You should not have to change the code in this method. We will use it to execute and evaluate your code.
-    You can of course comment out the parts that are not relevant to the task that you are working on, but make sure to
-    uncomment them later.
-    This sequence of code corresponds to the sequence of questions in your project handout.
-    '''
-
     ddir = '.' #your working dir
 
     in_train_filename = f'{ddir}/twitter_train.txt'
-
-#     naive_output_probs_filename = f'{ddir}/naive_output_probs.txt'
-
-    in_test_filename = f'{ddir}/twitter_dev_no_tag.txt'
-    in_ans_filename  = f'{ddir}/twitter_dev_ans.txt'
-#     naive_prediction_filename = f'{ddir}/naive_predictions.txt'
-#     naive_predict(naive_output_probs_filename, in_test_filename, naive_prediction_filename)
-#     correct, total, acc = evaluate(naive_prediction_filename, in_ans_filename)
-#     print(f'Naive prediction accuracy:     {correct}/{total} = {acc}')
-
-#     naive_prediction_filename2 = f'{ddir}/naive_predictions2.txt'
-#     naive_predict2(naive_output_probs_filename, in_train_filename, in_test_filename, naive_prediction_filename2)
-#     correct, total, acc = evaluate(naive_prediction_filename2, in_ans_filename)
-#     print(f'Naive prediction2 accuracy:    {correct}/{total} = {acc}')
-
     trans_probs_filename =  f'{ddir}/trans_probs.txt'
     output_probs_filename = f'{ddir}/output_probs.txt'
 
@@ -460,8 +396,5 @@ def run():
 if __name__ == '__main__':
     run()
 
-
-# Q4c) Viterbi1 Accuracy = 75.5%
-# Q5c) Viterbi2 Accuracy = 82.4%
-
-# %%
+ Viterbi1 Accuracy = 75.5%
+ Viterbi2 Accuracy = 82.4%
