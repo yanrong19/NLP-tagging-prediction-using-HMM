@@ -1,7 +1,4 @@
 # In[1]:
-
-
-#Q2a
 #import training data set and twitter tags
 import pandas as pd
 df = pd.read_csv("twitter_train.txt", sep="\t+", engine="python", header=None)
@@ -11,8 +8,6 @@ tt.columns = ["tags"]
 
 
 # In[35]:
-
-
 #for each tag, count number of times each token appear
 output_count_dict = {}
 
@@ -27,8 +22,6 @@ for tag in tt["tags"]:
 
 
 # In[36]:
-
-
 #convert count to probability of each token appearing given tag
 num_words = df['token'].nunique() #number of unique tokens in training data
 δ = 1 # possible values: 0.01, 0.1, 1, 10
@@ -43,9 +36,6 @@ for tag in output_count_dict.keys(): #iterate through all tags
 
 
 # In[32]:
-
-
-#Q2a
 #write to txt file
 import json
 with open('naive_output_probs.txt', 'w') as convert_file:
@@ -53,9 +43,7 @@ with open('naive_output_probs.txt', 'w') as convert_file:
 
 
 # In[33]:
-
-
-# Implement the six functions below
+#model design
 def naive_predict(in_output_probs_filename, in_test_filename, out_prediction_filename):
     import pandas as pd
     import json
@@ -103,19 +91,7 @@ def naive_predict2(in_output_probs_filename, in_train_filename, in_test_filename
         pred_df = pd.concat([pred_df, pd.DataFrame([curr_highest_tag])]) #append the tag corresponding to the highest probability value to ans_df
     pred_df.to_csv(out_prediction_filename, sep='\t', index=False, header=None) #store ans_df in the out_prediction_filename
 
-def viterbi_predict(in_tags_filename, in_trans_probs_filename, in_output_probs_filename, in_test_filename,
-                    out_predictions_filename):
-    pass
-
-def viterbi_predict2(in_tags_filename, in_trans_probs_filename, in_output_probs_filename, in_test_filename,
-                     out_predictions_filename):
-    pass
-
-
-
-
 def evaluate(in_prediction_filename, in_answer_filename):
-    """Do not change this method"""
     with open(in_prediction_filename) as fin:
         predicted_tags = [l.strip() for l in fin.readlines() if len(l.strip()) != 0]
 
@@ -128,17 +104,8 @@ def evaluate(in_prediction_filename, in_answer_filename):
         if pred == truth: correct += 1
     return correct, len(predicted_tags), correct/len(predicted_tags)
 
-
-
 def run():
-    '''
-    You should not have to change the code in this method. We will use it to execute and evaluate your code.
-    You can of course comment out the parts that are not relevant to the task that you are working on, but make sure to
-    uncomment them later.
-    This sequence of code corresponds to the sequence of questions in your project handout.
-    '''
-
-    ddir = 'C:/Users/Yan Rong/Documents/Uni files/BT3102/proj' #your working dir
+    ddir = '' #your working dir
 
     in_train_filename = f'{ddir}/twitter_train.txt'
 
@@ -156,32 +123,9 @@ def run():
     correct, total, acc = evaluate(naive_prediction_filename2, in_ans_filename)
     print(f'Naive prediction2 accuracy:    {correct}/{total} = {acc}')
 
-#     trans_probs_filename =  f'{ddir}/trans_probs.txt'
-#     output_probs_filename = f'{ddir}/output_probs.txt'
-
-#     in_tags_filename = f'{ddir}/twitter_tags.txt'
-#     viterbi_predictions_filename = f'{ddir}/viterbi_predictions.txt'
-#     viterbi_predict(in_tags_filename, trans_probs_filename, output_probs_filename, in_test_filename,
-#                     viterbi_predictions_filename)
-#     correct, total, acc = evaluate(viterbi_predictions_filename, in_ans_filename)
-#     print(f'Viterbi prediction accuracy:   {correct}/{total} = {acc}')
-
-#     trans_probs_filename2 =  f'{ddir}/trans_probs2.txt'
-#     output_probs_filename2 = f'{ddir}/output_probs2.txt'
-
-#     viterbi_predictions_filename2 = f'{ddir}/viterbi_predictions2.txt'
-#     viterbi_predict2(in_tags_filename, trans_probs_filename2, output_probs_filename2, in_test_filename,
-#                      viterbi_predictions_filename2)
-#     correct, total, acc = evaluate(viterbi_predictions_filename2, in_ans_filename)
-#     print(f'Viterbi2 prediction accuracy:  {correct}/{total} = {acc}')
-    
-
-
 if __name__ == '__main__':
     run()
 
-
-# Q3a) <br>
 # P(y = j | x = w) is the probability of tag j being associated with token w given token w appearing. <br>
 # Using Baye's Rule, P(y = j | x = w) = P(x = w | y = j) * P(y = j)/P(x = w) where P(x = w | y = j) is given by naive_output_probs.txt <br>
 # We keep track of the tag j that gives the highest value of P(y = j | x = w) given a token w.
@@ -202,16 +146,11 @@ if __name__ == '__main__':
 # Naive prediction accuracy: 908/1378 = 0.6589259796806967 <br>
 # Naive prediction2 accuracy: 895/1378 = 0.6494920174165457
 # 
-# Q2a) <br>
 # Based on the accuracy values, δ = 1 gave the highest overall accuracy for both models. Hence, δ = 1 was chosen.
 # 
-# Q2c) <br>
 # For δ = 1, Naive prediction accuracy = 908/1378 = 0.6589259796806967
 # 
-# Q3c) <br>
 # For δ = 1, Naive prediction2 accuracy = 909/1378 = 0.6596516690856313
-
-# In[ ]:
 
 
 
